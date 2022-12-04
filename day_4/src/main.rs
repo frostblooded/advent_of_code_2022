@@ -6,8 +6,15 @@ struct Range {
 }
 
 impl Range {
-    pub fn fully_contains(&self, other: &Range) -> bool {
+    fn fully_contains(&self, other: &Range) -> bool {
         self.start <= other.start && self.end >= other.end
+    }
+
+    fn overlaps(&self, other: &Range) -> bool {
+        self.fully_contains(other)
+            || other.fully_contains(self)
+            || (self.start < other.start && self.end >= other.start)
+            || (self.start <= other.end && self.end > other.end)
     }
 }
 
@@ -30,7 +37,7 @@ fn main() {
             let first_range: Range = first_range_str.into();
             let second_range: Range = second_range_str.into();
 
-            first_range.fully_contains(&second_range) || second_range.fully_contains(&first_range)
+            first_range.overlaps(&second_range)
         })
         .count() as u32;
 
